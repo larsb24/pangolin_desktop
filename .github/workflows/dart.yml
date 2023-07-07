@@ -1,42 +1,35 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Dart
-
-on:
-  push:
-    branches: [ main ]
+name: "Dart Analyze"
+on: # rebuild any PRs and main branch changes
   pull_request:
-    branches: [ main ]
+  push:
+    branches:
+      - main
 
 jobs:
-  build:
+  dart: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+      - uses: invertase/github-action-dart-analyzer@v1
+        with:
+          # (Optional) Treat info level issues as fatal.
+          fatal-infos: false
 
-      # Note: This workflow uses the latest stable version of the Dart SDK.
-      # You can specify other versions if desired, see documentation here:
-      # https://github.com/dart-lang/setup-dart/blob/main/README.md
-      # - uses: dart-lang/setup-dart@v1
-      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+          # (Optional) Treat warning level issues as fatal
+          # (defaults to true).
+          fatal-warnings: false
 
-      - name: Install dependencies
-        run: flutter pub get
+          # (Optional) Whether to add annotations to GitHub actions summary / PR
+          # review files.
+          # (defaults to true).
+          annotate: true
 
-      # Uncomment this step to verify the use of 'dart format' on each commit.
-      # - name: Verify formatting
-      #   run: dart format --output=none --set-exit-if-changed .
+          # (Optional) If set to true only annotations will be created and the
+          # GitHub action itself will not fail on Dart analyzer problems. 
+          # (defaults to false).
+          annotate-only: false
 
-      # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze project source
-        run: flutter analyze
-
-      # Your project will need to have tests in test/ and a dependency on
-      # package:test for this step to succeed. Note that Flutter projects will
-      # want to change this to 'flutter test'.
-      #- name: Run tests
-      #  run: dart test
+          # (Optional) The working directory to run the Dart analyzer in 
+          # (defaults to `./`).
+          working-directory: ./
